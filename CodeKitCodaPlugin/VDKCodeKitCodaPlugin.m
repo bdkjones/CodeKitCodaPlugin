@@ -59,20 +59,14 @@ BOOL isPathAChildOfPath(NSString *proposedChildPath, NSString *proposedParentPat
 {
     //
     //  Discussion:
-    //  Coda 2.5b19 and below have a bug where the 'path' property of textView will be null if we:
-    //    1) Drag a folder onto Coda to have it open in a new window.
-    //    2) Double-click any file listed in Coda's UI to open it in a textView.
-    //
-    //  Immediately calling textView.path returns null. As a workaround, we'll let this method return and give Coda
-    //  time to get through the current iteration of the runloop so that the 'path' property is set correctly. This is a kludge,
-    //  but it works and no user can switch files faster than 0.1s. I've only tested it on modern hardware, though, and can't
-    //  guarantee the delay is long enough on ancient Macs. Still, this is better than nothing and prevents the user from thinking
-    //  I'm a moron when the plugin doesn't add projects to CodeKit correctly because Coda never gave it the path of the opened file.
-    //
-    //  I've filed the bug with Panic: https://hive.panic.com/issues/26411 When it's fixed, I'll remove the delay.
+    //  Coda 2.5b19 and below have a bug where immediately calling [textView path] returns null in some cases.
+    //  As a workaround, we'll let this method return and get to the next iteration of the runloop so that the
+    //  'path' property is set correctly. I filed this with Panic at https://hive.panic.com/issues/26411 and Wade
+    //  used this approach to fix this issue for Coda 2.5+. I want to cover older versions of Coda 2, so I've left the
+    //  first 'dispatch_after' call in place. Eventually, it should be removed when no one uses earlier versions of Coda.
     //
 
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1f * NSEC_PER_SEC)), dispatch_get_main_queue(),
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0), dispatch_get_main_queue(),
     ^{
         NSString *textViewPath = textView.path;
         if (textViewPath)
@@ -140,7 +134,7 @@ BOOL isPathAChildOfPath(NSString *proposedChildPath, NSString *proposedParentPat
                    
                    if (errorDict)
                    {
-                       NSLog(@"Error encountered while compiling AppleScript Source: %@\nErrorDict: %@", scriptSource, errorDict);
+                       NSLog(@"The CodeKit Plugin encountered an error while compiling AppleScript Source: %@\nErrorDict: %@", scriptSource, errorDict);
                    }
                    else
                    {
@@ -151,7 +145,7 @@ BOOL isPathAChildOfPath(NSString *proposedChildPath, NSString *proposedParentPat
                                           [script executeAndReturnError:&runErrorDict];
                                           
                                           if (runErrorDict) {
-                                              NSLog(@"Error encountered while running AppleScript Source: %@\nErrorDict: %@", scriptSource, runErrorDict);
+                                              NSLog(@"The CodeKit Plugin encountered an error while running AppleScript Source: %@\nErrorDict: %@", scriptSource, runErrorDict);
                                           }
                                       });
                    }
