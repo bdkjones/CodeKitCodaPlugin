@@ -6,9 +6,16 @@
 	objectVersion = 46;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		A6EADF6E19E3B65A00E64DBC /* VDKCodeKitCodaPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = A6EADF6D19E3B65A00E64DBC /* VDKCodeKitCodaPlugin.m */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		A6EADF6219E3B5CA00E64DBC /* CodeKitCodaPlugin.codaplugin */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CodeKitCodaPlugin.codaplugin; sourceTree = BUILT_PRODUCTS_DIR; };
 		A6EADF6619E3B5CA00E64DBC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A6EADF6C19E3B65A00E64DBC /* VDKCodeKitCodaPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VDKCodeKitCodaPlugin.h; sourceTree = "<group>"; };
+		A6EADF6D19E3B65A00E64DBC /* VDKCodeKitCodaPlugin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VDKCodeKitCodaPlugin.m; sourceTree = "<group>"; };
+		A6EADF6F19E3B67300E64DBC /* CodaPlugInsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodaPlugInsController.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -41,6 +48,9 @@
 		A6EADF6419E3B5CA00E64DBC /* CodeKitCodaPlugin */ = {
 			isa = PBXGroup;
 			children = (
+				A6EADF6F19E3B67300E64DBC /* CodaPlugInsController.h */,
+				A6EADF6C19E3B65A00E64DBC /* VDKCodeKitCodaPlugin.h */,
+				A6EADF6D19E3B65A00E64DBC /* VDKCodeKitCodaPlugin.m */,
 				A6EADF6519E3B5CA00E64DBC /* Supporting Files */,
 			);
 			path = CodeKitCodaPlugin;
@@ -64,6 +74,7 @@
 				A6EADF5E19E3B5CA00E64DBC /* Sources */,
 				A6EADF5F19E3B5CA00E64DBC /* Frameworks */,
 				A6EADF6019E3B5CA00E64DBC /* Resources */,
+				A63ED94F19E615610041383F /* Increment Build Number */,
 			);
 			buildRules = (
 			);
@@ -80,6 +91,7 @@
 		A6EADF5A19E3B5CA00E64DBC /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				CLASSPREFIX = VDK;
 				LastUpgradeCheck = 0610;
 				ORGANIZATIONNAME = "Incident 57, Inc.";
 				TargetAttributes = {
@@ -115,11 +127,29 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		A63ED94F19E615610041383F /* Increment Build Number */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Increment Build Number";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "PLIST_FILE=\"\"\nif [ -f \"$INFOPLIST_FILE\" ]; then\nPLIST_FILE=\"$INFOPLIST_FILE\"\nelse\nif [ -f \"$SRCROOT/$INFOPLIST_FILE\" ]; then\nPLIST_FILE=\"$SRCROOT/$INFOPLIST_FILE\"\nelse\nexit 0\nfi\nfi\nBN=$(/usr/libexec/PlistBuddy -c \"Print CFBundleVersion\" $PLIST_FILE)\nBN=$(($BN + 1))\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $BN\" $PLIST_FILE";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		A6EADF5E19E3B5CA00E64DBC /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A6EADF6E19E3B65A00E64DBC /* VDKCodeKitCodaPlugin.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -243,6 +273,7 @@
 				A6EADF6B19E3B5CA00E64DBC /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
