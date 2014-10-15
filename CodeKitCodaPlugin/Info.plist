@@ -19,7 +19,11 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>10</string>
+	<string>11</string>
+	<key>CodaAuthorString</key>
+	<string>Bryan D K Jones</string>
+	<key>CodaDescriptionString</key>
+	<string>Automate Coda+CodeKit workflows</string>
 	<key>CodaPlugInMinimumAPIVersion</key>
 	<string>6</string>
 	<key>CodaPlugInSupportedAPIVersion</key>
