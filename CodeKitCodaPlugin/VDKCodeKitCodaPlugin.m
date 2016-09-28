@@ -11,19 +11,29 @@
 
 BOOL isPathAChildOfPath(NSString *proposedChildPath, NSString *proposedParentPath)
 {
+    // Clean both paths by stripping any trailing slashes, etc.
     NSString *cleanParent = [proposedParentPath stringByStandardizingPath];
     NSString *cleanChild = [proposedChildPath stringByStandardizingPath];
     
+    NSRange commonPrefixRange = [cleanChild rangeOfString:cleanParent options:NSCaseInsensitiveSearch|NSAnchoredSearch];
+    
     // Does path2 contain path1? (This should be faster than tokenizing the strings on every / and comparing components one by one.
-    if (cleanParent && cleanChild && [cleanChild rangeOfString:cleanParent options:NSCaseInsensitiveSearch|NSAnchoredSearch].location != NSNotFound)
+    if (commonPrefixRange.location != NSNotFound)
     {
-        // Do the two paths have different number of components? If not, they're something like:
-        // ~/Desktop/Folder and ~/Desktop/Folder2 which are two separate folders, but the second one technically "contains" the first one's path.
-        NSUInteger childCount = [[cleanChild pathComponents] count];
-        NSUInteger parentCount = [[cleanParent pathComponents] count];
-        
-        if (childCount > parentCount) {
-            return YES;
+        // The child path contains the parent, but it could be a false positive. Example:
+        // Parent: /Users/john/desktop/project
+        // Child:  /Users/john/desktop/project-other/file.js
+        // If child is truly part of parent, then the character AFTER the commonPrefixRange *must* be a slash.
+        NSUInteger nextCharacterLocation = commonPrefixRange.location + commonPrefixRange.length;
+        if (nextCharacterLocation < cleanChild.length)
+        {
+            unichar character = [cleanChild characterAtIndex:nextCharacterLocation];
+            return (character == '/') ? YES : NO;
+        }
+        else
+        {
+            // Can't possibly be a child. Proposed child and parent must be equal.
+            return NO;
         }
     }
     
@@ -87,7 +97,8 @@ BOOL isPathAChildOfPath(NSString *proposedChildPath, NSString *proposedParentPat
                    // is NOT the local site path folder; otherwise we'd miss adding the right project folder to CodeKit.
                    if (isPathAChildOfPath(textViewPath, sitePath))
                    {
-                       if ([manager fileExistsAtPath:[sitePath stringByAppendingPathComponent:@"config.codekit"] isDirectory:&isFolder] && !isFolder)
+                       if (([manager fileExistsAtPath:[sitePath stringByAppendingPathComponent:@"config.codekit3"] isDirectory:&isFolder] && !isFolder)
+                           || ([manager fileExistsAtPath:[sitePath stringByAppendingPathComponent:@"config.codekit"] isDirectory:&isFolder] && !isFolder))
                        {
                            projectPath = sitePath;
                        }
@@ -97,14 +108,15 @@ BOOL isPathAChildOfPath(NSString *proposedChildPath, NSString *proposedParentPat
 
                 if (!projectPath)
                 {
-                   // Walk each folder up from this file and find the first one that has a 'config.codekit' file.
+                   // Walk each folder up from this file and find the first one that has a 'config.codekit3' file.
                    NSString *folderToCheck = [textViewPath stringByDeletingLastPathComponent];
                    NSUInteger compsCount = [[folderToCheck pathComponents] count];
                    
                    for (NSUInteger i=0; i<compsCount; i++)
                    {
-                       NSString *possibleConfigPath = [folderToCheck stringByAppendingPathComponent:@"config.codekit"];
-                       if ([manager fileExistsAtPath:possibleConfigPath isDirectory:&isFolder] && !isFolder)
+                       NSString *possibleConfigPath = [folderToCheck stringByAppendingPathComponent:@"config.codekit3"];
+                       if (([manager fileExistsAtPath:possibleConfigPath isDirectory:&isFolder] && !isFolder)
+                           || ([manager fileExistsAtPath:[folderToCheck stringByAppendingPathComponent:@"config.codekit"] isDirectory:&isFolder] && !isFolder))
                        {
                            projectPath = folderToCheck;
                            break;
