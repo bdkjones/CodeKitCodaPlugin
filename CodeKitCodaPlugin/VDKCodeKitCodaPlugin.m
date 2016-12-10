@@ -98,6 +98,7 @@ BOOL isPathAChildOfPath(NSString *proposedChildPath, NSString *proposedParentPat
                    if (isPathAChildOfPath(textViewPath, sitePath))
                    {
                        if (([manager fileExistsAtPath:[sitePath stringByAppendingPathComponent:@"config.codekit3"] isDirectory:&isFolder] && !isFolder)
+                           || ([manager fileExistsAtPath:[sitePath stringByAppendingPathComponent:@".config.codekit3"] isDirectory:&isFolder] && !isFolder)
                            || ([manager fileExistsAtPath:[sitePath stringByAppendingPathComponent:@"config.codekit"] isDirectory:&isFolder] && !isFolder))
                        {
                            projectPath = sitePath;
@@ -114,8 +115,8 @@ BOOL isPathAChildOfPath(NSString *proposedChildPath, NSString *proposedParentPat
                    
                    for (NSUInteger i=0; i<compsCount; i++)
                    {
-                       NSString *possibleConfigPath = [folderToCheck stringByAppendingPathComponent:@"config.codekit3"];
-                       if (([manager fileExistsAtPath:possibleConfigPath isDirectory:&isFolder] && !isFolder)
+                       if (([manager fileExistsAtPath:[folderToCheck stringByAppendingPathComponent:@"config.codekit3"] isDirectory:&isFolder] && !isFolder)
+                           || ([manager fileExistsAtPath:[folderToCheck stringByAppendingPathComponent:@".config.codekit3"] isDirectory:&isFolder] && !isFolder)
                            || ([manager fileExistsAtPath:[folderToCheck stringByAppendingPathComponent:@"config.codekit"] isDirectory:&isFolder] && !isFolder))
                        {
                            projectPath = folderToCheck;
